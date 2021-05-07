@@ -14,8 +14,9 @@ function restricted() {
         return res.status(401).json({
           message: "You shall not pass!"
         })
+      }else{
+        next()
       }
-      next()
     }catch (err) {
       next(err)
     }
@@ -33,14 +34,16 @@ function restricted() {
 function checkUsernameFree() {
   return async (req, res, next) => {
     try{
-      const user = await Users.findBy(req.body.username).first()
+      const {username} = req.body
+      const user = await Users.findBy({username}).first()
 
       if(user){
         return res.status(422).json({
           message: "Username taken"
         })
+      }else{
+        next()
       }
-      next()
     }catch (err){
       next(err)
     }
@@ -58,14 +61,16 @@ function checkUsernameFree() {
 function checkUsernameExists() {
   return async (req, res, next) => {
     try{
-      const user = await Users.findBy(req.body.username).first()
+      const { username } = req.body
+      const user = await Users.findBy({ username }).first()
 
-      if(user){
+      if(!user){
         return res.status(401).json({
           message: "Invalid credentials"
         })
+      }else{
+        next()
       }
-      next()
     }catch (err){
       next(err)
     }
@@ -83,14 +88,16 @@ function checkUsernameExists() {
 function checkPasswordLength() {
   return async (req, res, next) => {
     try{
-      const password = await Users.findBy(req.body.password).first()
+
+      const {password} = req.body
 
       if(!password || (password.length <= 3)){
         return res.status(422).json({
           message: "Password must be longer than 3 chars"
         })
+      }else{
+        next()
       }
-      next()
     }catch (err){
       next(err)
     }
